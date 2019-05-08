@@ -1,0 +1,1286 @@
+----------------------------------
+- Parameters.py                  -
+----------------------------------
+data_params = {
+    "width"                 : 640,
+    "height"                : 480,
+    "labelled_train_db"     : 'data/labels.train.db',
+    "labelled_train_dir"    : 'data/labelled.train/',
+    "labelled_validate_db"  : 'data/labels.validate.db',
+    "labelled_validate_dir" : 'data/labelled.validate/',
+    "segmented_dir"         : 'data/segmented/'
+}
+
+model_params = {
+    "num_classes" : 2,
+    "batch_size"  : 300,
+    "epochs"      : 20
+}
+
+hyper_params = {
+    "max_training_images_count"    : 200,     # if value is -1 then take all training images
+    "max_testing_images_count"     : -1,      # if value is -1 then take all training images
+    "l2_regularisation"            : 0.0005,
+    "dropout"                      : 0.50,
+    "learning_rate"                : 0.0001,
+    "percentage_train"             : 80,
+    "windows_per_image_on_average" : 80,
+    "window_size"                  : 32,
+    "bee_radius"                   : 16,
+    "min_bee_prob"                 : 0.99,
+    "max_bee_prob"                 : 1.00,
+    "min_bee_prct_window"          : 50.0,
+    "bee_window_percentage"        : 20,
+    "filters_count"                : 32,
+    "kernel_size"                  : 3,
+    "padding_to_remove"            : 0,
+    "sliding_window_step"          : 2
+}
+----------------------------------
+- Training                       -
+----------------------------------
+Data Parameters:
+Key: width, Value: 640
+Key: height, Value: 480
+Key: labelled_train_db, Value: data/labels.train.db
+Key: labelled_train_dir, Value: data/labelled.train/
+Key: labelled_validate_db, Value: data/labels.validate.db
+Key: labelled_validate_dir, Value: data/labelled.validate/
+Key: segmented_dir, Value: data/segmented/
+Model Parameters:
+Key: num_classes, Value: 2
+Key: batch_size, Value: 300
+Key: epochs, Value: 20
+Hyper Parameters:
+Key: max_training_images_count, Value: 200
+Key: max_testing_images_count, Value: -1
+Key: l2_regularisation, Value: 0.0005
+Key: dropout, Value: 0.5
+Key: learning_rate, Value: 0.0001
+Key: percentage_train, Value: 80
+Key: windows_per_image_on_average, Value: 80
+Key: window_size, Value: 32
+Key: bee_radius, Value: 16
+Key: min_bee_prob, Value: 0.99
+Key: max_bee_prob, Value: 1.0
+Key: min_bee_prct_window, Value: 50.0
+Key: bee_window_percentage, Value: 20
+Key: filters_count, Value: 32
+Key: kernel_size, Value: 3
+Key: padding_to_remove, Value: 0
+Key: sliding_window_step, Value: 2
+Index is 32
+Index is 17
+Index is 177
+Index is 89
+Index is 46
+__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+input_1 (InputLayer)            (None, 32, 32, 3)    0                                            
+__________________________________________________________________________________________________
+conv1_1 (Conv2D)                (None, 32, 32, 32)   896         input_1[0][0]                    
+__________________________________________________________________________________________________
+conv2d_1 (Conv2D)               (None, 32, 32, 32)   9248        conv1_1[0][0]                    
+__________________________________________________________________________________________________
+max_pooling2d_1 (MaxPooling2D)  (None, 16, 16, 32)   0           conv2d_1[0][0]                   
+__________________________________________________________________________________________________
+conv2d_2 (Conv2D)               (None, 16, 16, 64)   18496       max_pooling2d_1[0][0]            
+__________________________________________________________________________________________________
+conv2d_3 (Conv2D)               (None, 16, 16, 64)   36928       conv2d_2[0][0]                   
+__________________________________________________________________________________________________
+max_pooling2d_2 (MaxPooling2D)  (None, 8, 8, 64)     0           conv2d_3[0][0]                   
+__________________________________________________________________________________________________
+conv2d_4 (Conv2D)               (None, 8, 8, 128)    73856       max_pooling2d_2[0][0]            
+__________________________________________________________________________________________________
+conv2d_5 (Conv2D)               (None, 8, 8, 128)    147584      conv2d_4[0][0]                   
+__________________________________________________________________________________________________
+max_pooling2d_3 (MaxPooling2D)  (None, 4, 4, 128)    0           conv2d_5[0][0]                   
+__________________________________________________________________________________________________
+conv2d_6 (Conv2D)               (None, 4, 4, 256)    295168      max_pooling2d_3[0][0]            
+__________________________________________________________________________________________________
+conv2d_7 (Conv2D)               (None, 4, 4, 256)    590080      conv2d_6[0][0]                   
+__________________________________________________________________________________________________
+max_pooling2d_4 (MaxPooling2D)  (None, 2, 2, 256)    0           conv2d_7[0][0]                   
+__________________________________________________________________________________________________
+conv2d_8 (Conv2D)               (None, 2, 2, 512)    1180160     max_pooling2d_4[0][0]            
+__________________________________________________________________________________________________
+conv2d_9 (Conv2D)               (None, 2, 2, 512)    2359808     conv2d_8[0][0]                   
+__________________________________________________________________________________________________
+up_sampling2d_1 (UpSampling2D)  (None, 4, 4, 512)    0           conv2d_9[0][0]                   
+__________________________________________________________________________________________________
+cropping2d_1 (Cropping2D)       (None, 4, 4, 256)    0           conv2d_7[0][0]                   
+__________________________________________________________________________________________________
+concatenate_1 (Concatenate)     (None, 4, 4, 768)    0           up_sampling2d_1[0][0]            
+                                                                 cropping2d_1[0][0]               
+__________________________________________________________________________________________________
+conv2d_10 (Conv2D)              (None, 4, 4, 256)    1769728     concatenate_1[0][0]              
+__________________________________________________________________________________________________
+conv2d_11 (Conv2D)              (None, 4, 4, 256)    590080      conv2d_10[0][0]                  
+__________________________________________________________________________________________________
+up_sampling2d_2 (UpSampling2D)  (None, 8, 8, 256)    0           conv2d_11[0][0]                  
+__________________________________________________________________________________________________
+cropping2d_2 (Cropping2D)       (None, 8, 8, 128)    0           conv2d_5[0][0]                   
+__________________________________________________________________________________________________
+concatenate_2 (Concatenate)     (None, 8, 8, 384)    0           up_sampling2d_2[0][0]            
+                                                                 cropping2d_2[0][0]               
+__________________________________________________________________________________________________
+conv2d_12 (Conv2D)              (None, 8, 8, 128)    442496      concatenate_2[0][0]              
+__________________________________________________________________________________________________
+conv2d_13 (Conv2D)              (None, 8, 8, 128)    147584      conv2d_12[0][0]                  
+__________________________________________________________________________________________________
+up_sampling2d_3 (UpSampling2D)  (None, 16, 16, 128)  0           conv2d_13[0][0]                  
+__________________________________________________________________________________________________
+cropping2d_3 (Cropping2D)       (None, 16, 16, 64)   0           conv2d_3[0][0]                   
+__________________________________________________________________________________________________
+concatenate_3 (Concatenate)     (None, 16, 16, 192)  0           up_sampling2d_3[0][0]            
+                                                                 cropping2d_3[0][0]               
+__________________________________________________________________________________________________
+conv2d_14 (Conv2D)              (None, 16, 16, 64)   110656      concatenate_3[0][0]              
+__________________________________________________________________________________________________
+conv2d_15 (Conv2D)              (None, 16, 16, 64)   36928       conv2d_14[0][0]                  
+__________________________________________________________________________________________________
+up_sampling2d_4 (UpSampling2D)  (None, 32, 32, 64)   0           conv2d_15[0][0]                  
+__________________________________________________________________________________________________
+cropping2d_4 (Cropping2D)       (None, 32, 32, 32)   0           conv2d_1[0][0]                   
+__________________________________________________________________________________________________
+concatenate_4 (Concatenate)     (None, 32, 32, 96)   0           up_sampling2d_4[0][0]            
+                                                                 cropping2d_4[0][0]               
+__________________________________________________________________________________________________
+conv2d_16 (Conv2D)              (None, 32, 32, 32)   27680       concatenate_4[0][0]              
+__________________________________________________________________________________________________
+conv2d_17 (Conv2D)              (None, 32, 32, 32)   9248        conv2d_16[0][0]                  
+__________________________________________________________________________________________________
+zero_padding2d_1 (ZeroPadding2D (None, 32, 32, 32)   0           conv2d_17[0][0]                  
+__________________________________________________________________________________________________
+conv2d_18 (Conv2D)              (None, 32, 32, 2)    66          zero_padding2d_1[0][0]           
+__________________________________________________________________________________________________
+activation_1 (Activation)       (None, 32, 32, 2)    0           conv2d_18[0][0]                  
+__________________________________________________________________________________________________
+dropout_1 (Dropout)             (None, 32, 32, 2)    0           activation_1[0][0]               
+__________________________________________________________________________________________________
+activation_2 (Activation)       (None, 32, 32, 2)    0           dropout_1[0][0]                  
+__________________________________________________________________________________________________
+dropout_2 (Dropout)             (None, 32, 32, 2)    0           activation_2[0][0]               
+__________________________________________________________________________________________________
+activation_3 (Activation)       (None, 32, 32, 2)    0           dropout_2[0][0]                  
+==================================================================================================
+Total params: 7,846,690
+Trainable params: 7,846,690
+Non-trainable params: 0
+__________________________________________________________________________________________________
+Analysing training image 0 out of 200 images
+Analysing training image 1 out of 200 images
+Analysing training image 2 out of 200 images
+Analysing training image 3 out of 200 images
+Analysing training image 4 out of 200 images
+Analysing training image 5 out of 200 images
+Analysing training image 6 out of 200 images
+Analysing training image 7 out of 200 images
+Analysing training image 8 out of 200 images
+Analysing training image 9 out of 200 images
+Analysing training image 10 out of 200 images
+Analysing training image 11 out of 200 images
+Analysing training image 12 out of 200 images
+Analysing training image 13 out of 200 images
+Analysing training image 14 out of 200 images
+Analysing training image 15 out of 200 images
+Analysing training image 16 out of 200 images
+Analysing training image 17 out of 200 images
+Analysing training image 18 out of 200 images
+Analysing training image 19 out of 200 images
+Analysing training image 20 out of 200 images
+Analysing training image 21 out of 200 images
+Analysing training image 22 out of 200 images
+Analysing training image 23 out of 200 images
+Analysing training image 24 out of 200 images
+Analysing training image 25 out of 200 images
+Analysing training image 26 out of 200 images
+Analysing training image 27 out of 200 images
+Analysing training image 28 out of 200 images
+Analysing training image 29 out of 200 images
+Analysing training image 30 out of 200 images
+Analysing training image 31 out of 200 images
+Analysing training image 32 out of 200 images
+Analysing training image 33 out of 200 images
+Analysing training image 34 out of 200 images
+Analysing training image 35 out of 200 images
+Analysing training image 36 out of 200 images
+Analysing training image 37 out of 200 images
+Analysing training image 38 out of 200 images
+Analysing training image 39 out of 200 images
+Analysing training image 40 out of 200 images
+Analysing training image 41 out of 200 images
+Analysing training image 42 out of 200 images
+Analysing training image 43 out of 200 images
+Analysing training image 44 out of 200 images
+Analysing training image 45 out of 200 images
+Analysing training image 46 out of 200 images
+Analysing training image 47 out of 200 images
+Analysing training image 48 out of 200 images
+Analysing training image 49 out of 200 images
+Analysing training image 50 out of 200 images
+Analysing training image 51 out of 200 images
+Analysing training image 52 out of 200 images
+Analysing training image 53 out of 200 images
+Analysing training image 54 out of 200 images
+Analysing training image 55 out of 200 images
+Analysing training image 56 out of 200 images
+Analysing training image 57 out of 200 images
+Analysing training image 58 out of 200 images
+Analysing training image 59 out of 200 images
+Analysing training image 60 out of 200 images
+Analysing training image 61 out of 200 images
+Analysing training image 62 out of 200 images
+Analysing training image 63 out of 200 images
+Analysing training image 64 out of 200 images
+Analysing training image 65 out of 200 images
+Analysing training image 66 out of 200 images
+Analysing training image 67 out of 200 images
+Analysing training image 68 out of 200 images
+Analysing training image 69 out of 200 images
+Analysing training image 70 out of 200 images
+Analysing training image 71 out of 200 images
+Analysing training image 72 out of 200 images
+Analysing training image 73 out of 200 images
+Analysing training image 74 out of 200 images
+Analysing training image 75 out of 200 images
+Analysing training image 76 out of 200 images
+Analysing training image 77 out of 200 images
+Analysing training image 78 out of 200 images
+Analysing training image 79 out of 200 images
+Analysing training image 80 out of 200 images
+Analysing training image 81 out of 200 images
+Analysing training image 82 out of 200 images
+Analysing training image 83 out of 200 images
+Analysing training image 84 out of 200 images
+Analysing training image 85 out of 200 images
+Analysing training image 86 out of 200 images
+Analysing training image 87 out of 200 images
+Analysing training image 88 out of 200 images
+Analysing training image 89 out of 200 images
+Analysing training image 90 out of 200 images
+Analysing training image 91 out of 200 images
+Analysing training image 92 out of 200 images
+Analysing training image 93 out of 200 images
+Analysing training image 94 out of 200 images
+Analysing training image 95 out of 200 images
+Analysing training image 96 out of 200 images
+Analysing training image 97 out of 200 images
+Analysing training image 98 out of 200 images
+Analysing training image 99 out of 200 images
+Analysing training image 100 out of 200 images
+Analysing training image 101 out of 200 images
+Analysing training image 102 out of 200 images
+Analysing training image 103 out of 200 images
+Analysing training image 104 out of 200 images
+Analysing training image 105 out of 200 images
+Analysing training image 106 out of 200 images
+Analysing training image 107 out of 200 images
+Analysing training image 108 out of 200 images
+Analysing training image 109 out of 200 images
+Analysing training image 110 out of 200 images
+Analysing training image 111 out of 200 images
+Analysing training image 112 out of 200 images
+Analysing training image 113 out of 200 images
+Analysing training image 114 out of 200 images
+Analysing training image 115 out of 200 images
+Analysing training image 116 out of 200 images
+Analysing training image 117 out of 200 images
+Analysing training image 118 out of 200 images
+Analysing training image 119 out of 200 images
+Analysing training image 120 out of 200 images
+Analysing training image 121 out of 200 images
+Analysing training image 122 out of 200 images
+Analysing training image 123 out of 200 images
+Analysing training image 124 out of 200 images
+Analysing training image 125 out of 200 images
+Analysing training image 126 out of 200 images
+Analysing training image 127 out of 200 images2019-05-02 23:25:24.514011: I T:\src\github\tensorflow\tensorflow\core\platform\cpu_feature_guard.cc:141] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2019-05-02 23:25:24.847201: I T:\src\github\tensorflow\tensorflow\core\common_runtime\gpu\gpu_device.cc:1405] Found device 0 with properties: 
+name: GeForce GTX 1080 major: 6 minor: 1 memoryClockRate(GHz): 1.8095
+pciBusID: 0000:65:00.0
+totalMemory: 8.00GiB freeMemory: 6.59GiB
+2019-05-02 23:25:24.848459: I T:\src\github\tensorflow\tensorflow\core\common_runtime\gpu\gpu_device.cc:1484] Adding visible gpu devices: 0
+2019-05-02 23:25:25.682888: I T:\src\github\tensorflow\tensorflow\core\common_runtime\gpu\gpu_device.cc:965] Device interconnect StreamExecutor with strength 1 edge matrix:
+2019-05-02 23:25:25.683654: I T:\src\github\tensorflow\tensorflow\core\common_runtime\gpu\gpu_device.cc:971]      0 
+2019-05-02 23:25:25.684156: I T:\src\github\tensorflow\tensorflow\core\common_runtime\gpu\gpu_device.cc:984] 0:   N 
+2019-05-02 23:25:25.684789: I T:\src\github\tensorflow\tensorflow\core\common_runtime\gpu\gpu_device.cc:1097] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 6360 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080, pci bus id: 0000:65:00.0, compute capability: 6.1)
+
+Analysing training image 128 out of 200 images
+Analysing training image 129 out of 200 images
+Analysing training image 130 out of 200 images
+Analysing training image 131 out of 200 images
+Analysing training image 132 out of 200 images
+Analysing training image 133 out of 200 images
+Analysing training image 134 out of 200 images
+Analysing training image 135 out of 200 images
+Analysing training image 136 out of 200 images
+Analysing training image 137 out of 200 images
+Analysing training image 138 out of 200 images
+Analysing training image 139 out of 200 images
+Analysing training image 140 out of 200 images
+Analysing training image 141 out of 200 images
+Analysing training image 142 out of 200 images
+Analysing training image 143 out of 200 images
+Analysing training image 144 out of 200 images
+Analysing training image 145 out of 200 images
+Analysing training image 146 out of 200 images
+Analysing training image 147 out of 200 images
+Analysing training image 148 out of 200 images
+Analysing training image 149 out of 200 images
+Analysing training image 150 out of 200 images
+Analysing training image 151 out of 200 images
+Analysing training image 152 out of 200 images
+Analysing training image 153 out of 200 images
+Analysing training image 154 out of 200 images
+Analysing training image 155 out of 200 images
+Analysing training image 156 out of 200 images
+Analysing training image 157 out of 200 images
+Analysing training image 158 out of 200 images
+Analysing training image 159 out of 200 images
+Analysing training image 160 out of 200 images
+Analysing training image 161 out of 200 images
+Analysing training image 162 out of 200 images
+Analysing training image 163 out of 200 images
+Analysing training image 164 out of 200 images
+Analysing training image 165 out of 200 images
+Analysing training image 166 out of 200 images
+Analysing training image 167 out of 200 images
+Analysing training image 168 out of 200 images
+Analysing training image 169 out of 200 images
+Analysing training image 170 out of 200 images
+Analysing training image 171 out of 200 images
+Analysing training image 172 out of 200 images
+Analysing training image 173 out of 200 images
+Analysing training image 174 out of 200 images
+Analysing training image 175 out of 200 images
+Analysing training image 176 out of 200 images
+Analysing training image 177 out of 200 images
+Analysing training image 178 out of 200 images
+Analysing training image 179 out of 200 images
+Analysing training image 180 out of 200 images
+Analysing training image 181 out of 200 images
+Analysing training image 182 out of 200 images
+Analysing training image 183 out of 200 images
+Analysing training image 184 out of 200 images
+Analysing training image 185 out of 200 images
+Analysing training image 186 out of 200 images
+Analysing training image 187 out of 200 images
+Analysing training image 188 out of 200 images
+Analysing training image 189 out of 200 images
+Analysing training image 190 out of 200 images
+Analysing training image 191 out of 200 images
+Analysing training image 192 out of 200 images
+Analysing training image 193 out of 200 images
+Analysing training image 194 out of 200 images
+Analysing training image 195 out of 200 images
+Analysing training image 196 out of 200 images
+Analysing training image 197 out of 200 images
+Analysing training image 198 out of 200 images
+Analysing training image 199 out of 200 images
+Train on 12800 samples, validate on 3200 samples
+Epoch 1/20
+
+  300/12800 [..............................] - ETA: 3:52 - loss: 0.6696 - acc: 0.8787
+  600/12800 [>.............................] - ETA: 1:55 - loss: 0.6663 - acc: 0.8763
+  900/12800 [=>............................] - ETA: 1:16 - loss: 0.6634 - acc: 0.8690
+ 1200/12800 [=>............................] - ETA: 57s - loss: 0.6616 - acc: 0.8743 
+ 1500/12800 [==>...........................] - ETA: 45s - loss: 0.6587 - acc: 0.8779
+ 1800/12800 [===>..........................] - ETA: 37s - loss: 0.6546 - acc: 0.8763
+ 2100/12800 [===>..........................] - ETA: 32s - loss: 0.6500 - acc: 0.8784
+ 2400/12800 [====>.........................] - ETA: 27s - loss: 0.6473 - acc: 0.8779
+ 2700/12800 [=====>........................] - ETA: 24s - loss: 0.6437 - acc: 0.8799
+ 3000/12800 [======>.......................] - ETA: 21s - loss: 0.6397 - acc: 0.8827
+ 3300/12800 [======>.......................] - ETA: 19s - loss: 0.6373 - acc: 0.8800
+ 3600/12800 [=======>......................] - ETA: 17s - loss: 0.6339 - acc: 0.8807
+ 3900/12800 [========>.....................] - ETA: 16s - loss: 0.6311 - acc: 0.8815
+ 4200/12800 [========>.....................] - ETA: 14s - loss: 0.6287 - acc: 0.8818
+ 4500/12800 [=========>....................] - ETA: 13s - loss: 0.6273 - acc: 0.8809
+ 4800/12800 [==========>...................] - ETA: 12s - loss: 0.6256 - acc: 0.8810
+ 5100/12800 [==========>...................] - ETA: 11s - loss: 0.6243 - acc: 0.8803
+ 5400/12800 [===========>..................] - ETA: 10s - loss: 0.6228 - acc: 0.8805
+ 5700/12800 [============>.................] - ETA: 9s - loss: 0.6212 - acc: 0.8806 
+ 6000/12800 [=============>................] - ETA: 8s - loss: 0.6203 - acc: 0.8796
+ 6300/12800 [=============>................] - ETA: 8s - loss: 0.6189 - acc: 0.8799
+ 6600/12800 [==============>...............] - ETA: 7s - loss: 0.6181 - acc: 0.8796
+ 6900/12800 [===============>..............] - ETA: 7s - loss: 0.6169 - acc: 0.8802
+ 7200/12800 [===============>..............] - ETA: 6s - loss: 0.6159 - acc: 0.8804
+ 7500/12800 [================>.............] - ETA: 5s - loss: 0.6149 - acc: 0.8800
+ 7800/12800 [=================>............] - ETA: 5s - loss: 0.6143 - acc: 0.8801
+ 8100/12800 [=================>............] - ETA: 5s - loss: 0.6142 - acc: 0.8791
+ 8400/12800 [==================>...........] - ETA: 4s - loss: 0.6138 - acc: 0.8789
+ 8700/12800 [===================>..........] - ETA: 4s - loss: 0.6133 - acc: 0.8790
+ 9000/12800 [====================>.........] - ETA: 3s - loss: 0.6125 - acc: 0.8792
+ 9300/12800 [====================>.........] - ETA: 3s - loss: 0.6120 - acc: 0.8791
+ 9600/12800 [=====================>........] - ETA: 3s - loss: 0.6113 - acc: 0.8792
+ 9900/12800 [======================>.......] - ETA: 2s - loss: 0.6106 - acc: 0.8799
+10200/12800 [======================>.......] - ETA: 2s - loss: 0.6097 - acc: 0.8806
+10500/12800 [=======================>......] - ETA: 2s - loss: 0.6090 - acc: 0.8807
+10800/12800 [========================>.....] - ETA: 1s - loss: 0.6085 - acc: 0.8806
+11100/12800 [=========================>....] - ETA: 1s - loss: 0.6075 - acc: 0.8813
+11400/12800 [=========================>....] - ETA: 1s - loss: 0.6071 - acc: 0.8811
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.6066 - acc: 0.8806
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.6061 - acc: 0.8805
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.6057 - acc: 0.8802
+12600/12800 [============================>.] - ETA: 0s - loss: 0.6051 - acc: 0.8806
+12800/12800 [==============================] - 12s 950us/step - loss: 0.6048 - acc: 0.8809 - val_loss: 0.4831 - val_acc: 0.8868
+Epoch 2/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5745 - acc: 0.9017
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5803 - acc: 0.8846
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5822 - acc: 0.8837
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5818 - acc: 0.8870
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5837 - acc: 0.8837
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5835 - acc: 0.8845
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5834 - acc: 0.8855
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5834 - acc: 0.8858
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5845 - acc: 0.8847
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5846 - acc: 0.8839
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5847 - acc: 0.8822
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5853 - acc: 0.8804
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5853 - acc: 0.8795
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5847 - acc: 0.8804
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5846 - acc: 0.8807
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5846 - acc: 0.8809
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5848 - acc: 0.8805
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5843 - acc: 0.8811
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5839 - acc: 0.8819
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5834 - acc: 0.8823
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5834 - acc: 0.8824
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5833 - acc: 0.8824
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5832 - acc: 0.8826
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5826 - acc: 0.8835
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5826 - acc: 0.8829
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5821 - acc: 0.8835
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5817 - acc: 0.8833
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5811 - acc: 0.8839
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5805 - acc: 0.8843
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5804 - acc: 0.8844
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5800 - acc: 0.8850
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5796 - acc: 0.8850
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5790 - acc: 0.8854
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5788 - acc: 0.8849
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5786 - acc: 0.8852
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5780 - acc: 0.8852
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5777 - acc: 0.8852
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5772 - acc: 0.8851
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5768 - acc: 0.8852
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5765 - acc: 0.8848
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5759 - acc: 0.8848
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5754 - acc: 0.8851
+12800/12800 [==============================] - 6s 439us/step - loss: 0.5750 - acc: 0.8855 - val_loss: 0.3009 - val_acc: 0.9125
+Epoch 3/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5648 - acc: 0.9054
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5654 - acc: 0.8977
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5642 - acc: 0.8871
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5621 - acc: 0.8893
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5627 - acc: 0.8883
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5612 - acc: 0.8906
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5608 - acc: 0.8925
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5607 - acc: 0.8940
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5615 - acc: 0.8920
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5602 - acc: 0.8933
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5602 - acc: 0.8929
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5602 - acc: 0.8936
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5598 - acc: 0.8929
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5591 - acc: 0.8926
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5588 - acc: 0.8917
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5588 - acc: 0.8917
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5588 - acc: 0.8922
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5585 - acc: 0.8921
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5581 - acc: 0.8925
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5581 - acc: 0.8923
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5576 - acc: 0.8925
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5572 - acc: 0.8924
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5570 - acc: 0.8926
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5570 - acc: 0.8917
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5563 - acc: 0.8924
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5562 - acc: 0.8922
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5558 - acc: 0.8925
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5558 - acc: 0.8926
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5557 - acc: 0.8922
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5555 - acc: 0.8932
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5554 - acc: 0.8935
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5557 - acc: 0.8931
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5555 - acc: 0.8922
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5556 - acc: 0.8924
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5557 - acc: 0.8924
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5556 - acc: 0.8921
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5556 - acc: 0.8923
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5554 - acc: 0.8924
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5554 - acc: 0.8925
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5556 - acc: 0.8921
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5556 - acc: 0.8920
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5555 - acc: 0.8923
+12800/12800 [==============================] - 6s 433us/step - loss: 0.5555 - acc: 0.8919 - val_loss: 0.3461 - val_acc: 0.9247
+Epoch 4/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5541 - acc: 0.8912
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5570 - acc: 0.8789
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5547 - acc: 0.8814
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5549 - acc: 0.8833
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5543 - acc: 0.8829
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5551 - acc: 0.8857
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5536 - acc: 0.8902
+ 2400/12800 [====>.........................] - ETA: 3s - loss: 0.5525 - acc: 0.8934
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5517 - acc: 0.8934
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5507 - acc: 0.8949
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5505 - acc: 0.8939
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5510 - acc: 0.8935
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5505 - acc: 0.8945
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5506 - acc: 0.8940
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5509 - acc: 0.8937
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5505 - acc: 0.8945
+ 5100/12800 [==========>...................] - ETA: 2s - loss: 0.5504 - acc: 0.8940
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5498 - acc: 0.8949
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5495 - acc: 0.8957
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5492 - acc: 0.8968
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5490 - acc: 0.8961
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5492 - acc: 0.8958
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5484 - acc: 0.8961
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5481 - acc: 0.8962
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5482 - acc: 0.8956
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5481 - acc: 0.8954
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5483 - acc: 0.8946
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5484 - acc: 0.8943
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5485 - acc: 0.8944
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5485 - acc: 0.8946
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5485 - acc: 0.8949
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5483 - acc: 0.8954
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5482 - acc: 0.8951
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5479 - acc: 0.8955
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5477 - acc: 0.8958
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5478 - acc: 0.8957
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5478 - acc: 0.8955
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5480 - acc: 0.8949
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5479 - acc: 0.8951
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5479 - acc: 0.8948
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5477 - acc: 0.8949
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5475 - acc: 0.8952
+12800/12800 [==============================] - 6s 434us/step - loss: 0.5475 - acc: 0.8951 - val_loss: 0.2868 - val_acc: 0.9407
+Epoch 5/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5441 - acc: 0.8948
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5437 - acc: 0.8940
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5449 - acc: 0.8903
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5446 - acc: 0.8918
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5449 - acc: 0.8911
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5451 - acc: 0.8935
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5436 - acc: 0.8956
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5452 - acc: 0.8942
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5451 - acc: 0.8955
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5456 - acc: 0.8959
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5456 - acc: 0.8966
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5451 - acc: 0.8979
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5450 - acc: 0.8983
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5447 - acc: 0.8983
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5456 - acc: 0.8963
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5450 - acc: 0.8981
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5443 - acc: 0.8990
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5444 - acc: 0.8988
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5441 - acc: 0.8999
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5442 - acc: 0.8999
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5443 - acc: 0.8998
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5444 - acc: 0.8996
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5446 - acc: 0.8996
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5449 - acc: 0.8990
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5448 - acc: 0.8988
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5447 - acc: 0.8988
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5440 - acc: 0.8999
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5438 - acc: 0.9001
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5437 - acc: 0.8998
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5437 - acc: 0.9001
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5436 - acc: 0.8998
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5437 - acc: 0.8997
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5438 - acc: 0.8998
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5438 - acc: 0.8993
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5438 - acc: 0.8994
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5437 - acc: 0.8997
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5434 - acc: 0.9002
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5435 - acc: 0.8994
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5434 - acc: 0.8998
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5435 - acc: 0.8998
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5437 - acc: 0.8995
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5439 - acc: 0.8991
+12800/12800 [==============================] - 6s 441us/step - loss: 0.5439 - acc: 0.8990 - val_loss: 0.2339 - val_acc: 0.9465
+Epoch 6/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5437 - acc: 0.9116
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5449 - acc: 0.8994
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5467 - acc: 0.8997
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5453 - acc: 0.9033
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5452 - acc: 0.9012
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5439 - acc: 0.9015
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5443 - acc: 0.9022
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5446 - acc: 0.9016
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5430 - acc: 0.9012
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5429 - acc: 0.9008
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5423 - acc: 0.9028
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5418 - acc: 0.9025
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5417 - acc: 0.9026
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5412 - acc: 0.9033
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5410 - acc: 0.9042
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5410 - acc: 0.9043
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5410 - acc: 0.9045
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5410 - acc: 0.9047
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5409 - acc: 0.9045
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5410 - acc: 0.9048
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5410 - acc: 0.9044
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5409 - acc: 0.9045
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5408 - acc: 0.9042
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5403 - acc: 0.9048
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5410 - acc: 0.9033
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5412 - acc: 0.9031
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5411 - acc: 0.9036
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5413 - acc: 0.9033
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5415 - acc: 0.9029
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5415 - acc: 0.9025
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5417 - acc: 0.9020
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5416 - acc: 0.9022
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5416 - acc: 0.9019
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5418 - acc: 0.9010
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5416 - acc: 0.9015
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5416 - acc: 0.9014
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5417 - acc: 0.9014
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5420 - acc: 0.9005
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5418 - acc: 0.9004
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5417 - acc: 0.9005
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5417 - acc: 0.9003
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5416 - acc: 0.9002
+12800/12800 [==============================] - 6s 435us/step - loss: 0.5415 - acc: 0.9005 - val_loss: 0.2093 - val_acc: 0.9516
+Epoch 7/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5482 - acc: 0.8992
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5451 - acc: 0.8992
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5469 - acc: 0.8973
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5459 - acc: 0.8988
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5435 - acc: 0.9002
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5432 - acc: 0.8998
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5421 - acc: 0.9012
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5410 - acc: 0.9027
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5406 - acc: 0.9040
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5409 - acc: 0.9025
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5402 - acc: 0.9033
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5408 - acc: 0.9023
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5404 - acc: 0.9026
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5406 - acc: 0.9020
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5404 - acc: 0.9016
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5406 - acc: 0.9018
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5404 - acc: 0.9011
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5405 - acc: 0.9013
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5405 - acc: 0.9016
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5404 - acc: 0.9014
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5407 - acc: 0.9011
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5409 - acc: 0.9010
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5408 - acc: 0.9014
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5406 - acc: 0.9017
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5404 - acc: 0.9016
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5404 - acc: 0.9017
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5404 - acc: 0.9014
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5400 - acc: 0.9014
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5401 - acc: 0.9015
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5402 - acc: 0.9009
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5403 - acc: 0.9010
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5400 - acc: 0.9012
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5402 - acc: 0.9013
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5402 - acc: 0.9014
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5404 - acc: 0.9015
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5404 - acc: 0.9012
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5404 - acc: 0.9014
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5403 - acc: 0.9014
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5401 - acc: 0.9016
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5401 - acc: 0.9017
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5402 - acc: 0.9010
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5403 - acc: 0.9007
+12800/12800 [==============================] - 6s 439us/step - loss: 0.5402 - acc: 0.9011 - val_loss: 0.2108 - val_acc: 0.9529
+Epoch 8/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5303 - acc: 0.9131
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5308 - acc: 0.9223
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5325 - acc: 0.9132
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5377 - acc: 0.9033
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5376 - acc: 0.9019
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5375 - acc: 0.9019
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5385 - acc: 0.8985
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5379 - acc: 0.9015
+ 2700/12800 [=====>........................] - ETA: 4s - loss: 0.5379 - acc: 0.9039
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5386 - acc: 0.9032
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5384 - acc: 0.9047
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5384 - acc: 0.9045
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5384 - acc: 0.9035
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5389 - acc: 0.9009
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5391 - acc: 0.9002
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5394 - acc: 0.8999
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5394 - acc: 0.9013
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5398 - acc: 0.9017
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5401 - acc: 0.9006
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5400 - acc: 0.9009
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5401 - acc: 0.8998
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5396 - acc: 0.9010
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5395 - acc: 0.9011
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5391 - acc: 0.9016
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5389 - acc: 0.9023
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5392 - acc: 0.9020
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5390 - acc: 0.9019
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5391 - acc: 0.9022
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5388 - acc: 0.9026
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5385 - acc: 0.9025
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5390 - acc: 0.9019
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5389 - acc: 0.9021
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5390 - acc: 0.9019
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5391 - acc: 0.9016
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5392 - acc: 0.9012
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5393 - acc: 0.9011
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5394 - acc: 0.9011
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5395 - acc: 0.9012
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5393 - acc: 0.9012
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5392 - acc: 0.9012
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5391 - acc: 0.9014
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5390 - acc: 0.9014
+12800/12800 [==============================] - 6s 444us/step - loss: 0.5389 - acc: 0.9017 - val_loss: 0.2079 - val_acc: 0.9551
+Epoch 9/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5379 - acc: 0.9047
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5357 - acc: 0.9230
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5368 - acc: 0.9182
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5369 - acc: 0.9157
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5361 - acc: 0.9119
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5393 - acc: 0.9060
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5395 - acc: 0.9070
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5394 - acc: 0.9041
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5389 - acc: 0.9038
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5387 - acc: 0.9040
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5391 - acc: 0.9044
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5393 - acc: 0.9034
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5390 - acc: 0.9044
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5392 - acc: 0.9041
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5392 - acc: 0.9045
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5390 - acc: 0.9040
+ 5100/12800 [==========>...................] - ETA: 2s - loss: 0.5388 - acc: 0.9043
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5389 - acc: 0.9044
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5390 - acc: 0.9041
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5390 - acc: 0.9034
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5389 - acc: 0.9036
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5386 - acc: 0.9038
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5386 - acc: 0.9037
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5383 - acc: 0.9039
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5382 - acc: 0.9043
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5381 - acc: 0.9044
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5379 - acc: 0.9044
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5382 - acc: 0.9041
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5382 - acc: 0.9037
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5381 - acc: 0.9039
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5383 - acc: 0.9030
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5383 - acc: 0.9027
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5382 - acc: 0.9029
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5384 - acc: 0.9023
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5385 - acc: 0.9026
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5384 - acc: 0.9022
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5384 - acc: 0.9023
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5383 - acc: 0.9023
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5382 - acc: 0.9023
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5382 - acc: 0.9025
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5384 - acc: 0.9021
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5382 - acc: 0.9023
+12800/12800 [==============================] - 6s 433us/step - loss: 0.5383 - acc: 0.9021 - val_loss: 0.2185 - val_acc: 0.9554
+Epoch 10/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5401 - acc: 0.9066
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5373 - acc: 0.9058
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5385 - acc: 0.9070
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5380 - acc: 0.9077
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5385 - acc: 0.9056
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5398 - acc: 0.9023
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5389 - acc: 0.9024
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5388 - acc: 0.9031
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5376 - acc: 0.9039
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5377 - acc: 0.9062
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5377 - acc: 0.9054
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5381 - acc: 0.9024
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5381 - acc: 0.9006
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5375 - acc: 0.9012
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5377 - acc: 0.8999
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5376 - acc: 0.9003
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5374 - acc: 0.9007
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5373 - acc: 0.9016
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5378 - acc: 0.9013
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5379 - acc: 0.9011
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5381 - acc: 0.9015
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5378 - acc: 0.9019
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5379 - acc: 0.9018
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5376 - acc: 0.9022
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5380 - acc: 0.9016
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5381 - acc: 0.9018
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5380 - acc: 0.9018
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5378 - acc: 0.9026
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5378 - acc: 0.9026
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5377 - acc: 0.9019
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5378 - acc: 0.9017
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5378 - acc: 0.9020
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5379 - acc: 0.9012
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5381 - acc: 0.9006
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5381 - acc: 0.9008
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5381 - acc: 0.9007
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5380 - acc: 0.9014
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5379 - acc: 0.9020
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5376 - acc: 0.9025
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5376 - acc: 0.9023
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5375 - acc: 0.9024
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5376 - acc: 0.9023
+12800/12800 [==============================] - 6s 437us/step - loss: 0.5375 - acc: 0.9025 - val_loss: 0.2074 - val_acc: 0.9574
+Epoch 11/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5420 - acc: 0.8834
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5391 - acc: 0.8839
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5358 - acc: 0.8956
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5367 - acc: 0.8988
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5366 - acc: 0.9022
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5368 - acc: 0.9016
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5373 - acc: 0.9019
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5386 - acc: 0.9001
+ 2700/12800 [=====>........................] - ETA: 4s - loss: 0.5381 - acc: 0.9011
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5375 - acc: 0.9011
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5383 - acc: 0.8998
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5376 - acc: 0.9005
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5372 - acc: 0.9012
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5375 - acc: 0.9013
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5380 - acc: 0.9005
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5381 - acc: 0.9004
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5380 - acc: 0.9009
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5379 - acc: 0.9011
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5377 - acc: 0.9014
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5376 - acc: 0.9017
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5374 - acc: 0.9025
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5378 - acc: 0.9016
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5378 - acc: 0.9012
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5380 - acc: 0.9010
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5378 - acc: 0.9013
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5376 - acc: 0.9017
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5374 - acc: 0.9019
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5370 - acc: 0.9021
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5371 - acc: 0.9021
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5372 - acc: 0.9022
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5370 - acc: 0.9023
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5370 - acc: 0.9021
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5371 - acc: 0.9025
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5373 - acc: 0.9023
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5372 - acc: 0.9023
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5374 - acc: 0.9023
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5375 - acc: 0.9025
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5374 - acc: 0.9027
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5374 - acc: 0.9028
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5372 - acc: 0.9029
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5372 - acc: 0.9030
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5373 - acc: 0.9026
+12800/12800 [==============================] - 6s 438us/step - loss: 0.5373 - acc: 0.9027 - val_loss: 0.2350 - val_acc: 0.9578
+Epoch 12/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5398 - acc: 0.8995
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5369 - acc: 0.9061
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5354 - acc: 0.9087
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5352 - acc: 0.9080
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5374 - acc: 0.9049
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5375 - acc: 0.9058
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5372 - acc: 0.9074
+ 2400/12800 [====>.........................] - ETA: 3s - loss: 0.5383 - acc: 0.9027
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5378 - acc: 0.9007
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5374 - acc: 0.9013
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5381 - acc: 0.9005
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5374 - acc: 0.9019
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5369 - acc: 0.9029
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5367 - acc: 0.9031
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5363 - acc: 0.9031
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5355 - acc: 0.9038
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5360 - acc: 0.9032
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5358 - acc: 0.9038
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5355 - acc: 0.9050
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5358 - acc: 0.9039
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5363 - acc: 0.9035
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5366 - acc: 0.9032
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5366 - acc: 0.9024
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5365 - acc: 0.9030
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5366 - acc: 0.9024
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5366 - acc: 0.9023
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5370 - acc: 0.9019
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5368 - acc: 0.9026
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5366 - acc: 0.9029
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5367 - acc: 0.9030
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5366 - acc: 0.9027
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5365 - acc: 0.9023
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5367 - acc: 0.9023
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5367 - acc: 0.9030
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5367 - acc: 0.9030
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5368 - acc: 0.9032
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5367 - acc: 0.9033
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5366 - acc: 0.9033
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5365 - acc: 0.9036
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5368 - acc: 0.9032
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5369 - acc: 0.9031
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5369 - acc: 0.9028
+12800/12800 [==============================] - 6s 438us/step - loss: 0.5369 - acc: 0.9029 - val_loss: 0.1943 - val_acc: 0.9579
+Epoch 13/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5418 - acc: 0.9027
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5426 - acc: 0.8937
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5408 - acc: 0.8964
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5400 - acc: 0.8965
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5397 - acc: 0.8990
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5388 - acc: 0.8990
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5382 - acc: 0.8987
+ 2400/12800 [====>.........................] - ETA: 3s - loss: 0.5383 - acc: 0.8981
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5380 - acc: 0.8997
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5380 - acc: 0.8993
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5380 - acc: 0.9005
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5377 - acc: 0.9008
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5365 - acc: 0.9043
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5363 - acc: 0.9047
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5365 - acc: 0.9036
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5362 - acc: 0.9039
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5359 - acc: 0.9028
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5357 - acc: 0.9034
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5358 - acc: 0.9043
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5358 - acc: 0.9042
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5361 - acc: 0.9035
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5368 - acc: 0.9019
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5367 - acc: 0.9024
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5372 - acc: 0.9019
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5371 - acc: 0.9021
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5371 - acc: 0.9029
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5373 - acc: 0.9024
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5372 - acc: 0.9024
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5371 - acc: 0.9026
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5374 - acc: 0.9020
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5373 - acc: 0.9021
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5372 - acc: 0.9024
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5371 - acc: 0.9023
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5370 - acc: 0.9023
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5371 - acc: 0.9022
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5370 - acc: 0.9018
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5368 - acc: 0.9020
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5367 - acc: 0.9022
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5367 - acc: 0.9023
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5366 - acc: 0.9028
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5366 - acc: 0.9030
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5366 - acc: 0.9028
+12800/12800 [==============================] - 6s 435us/step - loss: 0.5365 - acc: 0.9030 - val_loss: 0.2138 - val_acc: 0.9586
+Epoch 14/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5380 - acc: 0.8903
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5352 - acc: 0.9017
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5325 - acc: 0.9051
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5334 - acc: 0.9041
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5335 - acc: 0.9046
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5339 - acc: 0.9034
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5330 - acc: 0.9061
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5333 - acc: 0.9063
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5338 - acc: 0.9065
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5343 - acc: 0.9053
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5349 - acc: 0.9044
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5346 - acc: 0.9049
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5350 - acc: 0.9050
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5349 - acc: 0.9050
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5345 - acc: 0.9054
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5347 - acc: 0.9055
+ 5100/12800 [==========>...................] - ETA: 2s - loss: 0.5348 - acc: 0.9054
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5349 - acc: 0.9061
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5353 - acc: 0.9050
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5353 - acc: 0.9050
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5354 - acc: 0.9051
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5354 - acc: 0.9049
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5354 - acc: 0.9053
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5354 - acc: 0.9050
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5353 - acc: 0.9043
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5356 - acc: 0.9036
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5354 - acc: 0.9039
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5354 - acc: 0.9039
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5355 - acc: 0.9038
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5356 - acc: 0.9038
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5354 - acc: 0.9032
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5354 - acc: 0.9038
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5356 - acc: 0.9036
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5356 - acc: 0.9042
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5354 - acc: 0.9045
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5354 - acc: 0.9043
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5354 - acc: 0.9043
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5354 - acc: 0.9043
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5352 - acc: 0.9043
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5352 - acc: 0.9043
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5354 - acc: 0.9039
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5355 - acc: 0.9036
+12800/12800 [==============================] - 6s 433us/step - loss: 0.5355 - acc: 0.9035 - val_loss: 0.2490 - val_acc: 0.9594
+Epoch 15/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5379 - acc: 0.9078
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5403 - acc: 0.8953
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5407 - acc: 0.8919
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5389 - acc: 0.8970
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5369 - acc: 0.9006
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5360 - acc: 0.8985
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5361 - acc: 0.9004
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5360 - acc: 0.9012
+ 2700/12800 [=====>........................] - ETA: 4s - loss: 0.5364 - acc: 0.9004
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5359 - acc: 0.9018
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5358 - acc: 0.9023
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5361 - acc: 0.9015
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5361 - acc: 0.9019
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5364 - acc: 0.9027
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5363 - acc: 0.9025
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5363 - acc: 0.9033
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5359 - acc: 0.9036
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5363 - acc: 0.9030
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5359 - acc: 0.9029
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5362 - acc: 0.9021
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5360 - acc: 0.9021
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5362 - acc: 0.9023
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5362 - acc: 0.9023
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5364 - acc: 0.9018
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5365 - acc: 0.9022
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5361 - acc: 0.9025
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5361 - acc: 0.9018
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5360 - acc: 0.9019
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5357 - acc: 0.9031
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5354 - acc: 0.9030
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5355 - acc: 0.9026
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5355 - acc: 0.9026
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5355 - acc: 0.9028
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5353 - acc: 0.9031
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5354 - acc: 0.9025
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5353 - acc: 0.9028
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5352 - acc: 0.9035
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5350 - acc: 0.9039
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5350 - acc: 0.9037
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5351 - acc: 0.9034
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5350 - acc: 0.9036
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5348 - acc: 0.9037
+12800/12800 [==============================] - 6s 436us/step - loss: 0.5349 - acc: 0.9038 - val_loss: 0.1704 - val_acc: 0.9600
+Epoch 16/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5393 - acc: 0.9051
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5355 - acc: 0.9068
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5356 - acc: 0.9010
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5355 - acc: 0.8992
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5356 - acc: 0.9005
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5364 - acc: 0.9002
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5355 - acc: 0.9022
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5354 - acc: 0.9047
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5353 - acc: 0.9048
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5355 - acc: 0.9039
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5352 - acc: 0.9030
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5351 - acc: 0.9028
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5345 - acc: 0.9026
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5339 - acc: 0.9044
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5341 - acc: 0.9037
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5340 - acc: 0.9043
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5342 - acc: 0.9049
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5343 - acc: 0.9048
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5350 - acc: 0.9045
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5355 - acc: 0.9038
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5352 - acc: 0.9044
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5351 - acc: 0.9043
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5347 - acc: 0.9049
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5348 - acc: 0.9053
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5346 - acc: 0.9057
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5350 - acc: 0.9043
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5349 - acc: 0.9050
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5353 - acc: 0.9045
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5352 - acc: 0.9046
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5352 - acc: 0.9042
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5352 - acc: 0.9040
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5352 - acc: 0.9041
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5353 - acc: 0.9042
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5350 - acc: 0.9046
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5351 - acc: 0.9047
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5351 - acc: 0.9048
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5348 - acc: 0.9051
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5350 - acc: 0.9046
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5350 - acc: 0.9042
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5351 - acc: 0.9039
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5352 - acc: 0.9036
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5354 - acc: 0.9035
+12800/12800 [==============================] - 6s 436us/step - loss: 0.5352 - acc: 0.9038 - val_loss: 0.2300 - val_acc: 0.9592
+Epoch 17/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5355 - acc: 0.9129
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5346 - acc: 0.9051
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5361 - acc: 0.9007
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5378 - acc: 0.8976
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5373 - acc: 0.8976
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5363 - acc: 0.8992
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5360 - acc: 0.8993
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5350 - acc: 0.9018
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5349 - acc: 0.9012
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5345 - acc: 0.9011
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5343 - acc: 0.9009
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5346 - acc: 0.9011
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5347 - acc: 0.9017
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5347 - acc: 0.9017
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5344 - acc: 0.9028
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5345 - acc: 0.9014
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5342 - acc: 0.9025
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5344 - acc: 0.9026
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5342 - acc: 0.9033
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5347 - acc: 0.9034
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5344 - acc: 0.9032
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5346 - acc: 0.9021
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5344 - acc: 0.9030
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5343 - acc: 0.9031
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5342 - acc: 0.9045
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5344 - acc: 0.9044
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5344 - acc: 0.9043
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5345 - acc: 0.9037
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5343 - acc: 0.9042
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5342 - acc: 0.9043
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5343 - acc: 0.9037
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5343 - acc: 0.9038
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5341 - acc: 0.9045
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5342 - acc: 0.9044
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5342 - acc: 0.9044
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5342 - acc: 0.9050
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5341 - acc: 0.9049
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5342 - acc: 0.9045
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5340 - acc: 0.9045
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5341 - acc: 0.9040
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5341 - acc: 0.9042
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5342 - acc: 0.9044
+12800/12800 [==============================] - 6s 439us/step - loss: 0.5341 - acc: 0.9042 - val_loss: 0.1578 - val_acc: 0.9586
+Epoch 18/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5202 - acc: 0.9143
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5285 - acc: 0.9062
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5292 - acc: 0.9089
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5299 - acc: 0.9126
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5301 - acc: 0.9086
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5299 - acc: 0.9098
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5299 - acc: 0.9108
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5304 - acc: 0.9112
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5303 - acc: 0.9104
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5314 - acc: 0.9096
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5323 - acc: 0.9089
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5322 - acc: 0.9077
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5322 - acc: 0.9077
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5325 - acc: 0.9077
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5327 - acc: 0.9071
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5328 - acc: 0.9074
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5330 - acc: 0.9066
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5329 - acc: 0.9072
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5328 - acc: 0.9077
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5331 - acc: 0.9067
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5333 - acc: 0.9066
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5331 - acc: 0.9076
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5330 - acc: 0.9077
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5331 - acc: 0.9079
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5328 - acc: 0.9081
+ 7800/12800 [=================>............] - ETA: 2s - loss: 0.5326 - acc: 0.9083
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5327 - acc: 0.9079
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5325 - acc: 0.9080
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5326 - acc: 0.9082
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5330 - acc: 0.9077
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5330 - acc: 0.9078
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5328 - acc: 0.9080
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5327 - acc: 0.9075
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5327 - acc: 0.9073
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5327 - acc: 0.9070
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5326 - acc: 0.9071
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5325 - acc: 0.9070
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5324 - acc: 0.9072
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5325 - acc: 0.9071
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5326 - acc: 0.9062
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5326 - acc: 0.9058
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5328 - acc: 0.9055
+12800/12800 [==============================] - 6s 453us/step - loss: 0.5329 - acc: 0.9048 - val_loss: 0.1918 - val_acc: 0.9606
+Epoch 19/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5345 - acc: 0.9031
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5336 - acc: 0.8987
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5349 - acc: 0.9037
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5339 - acc: 0.9030
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5320 - acc: 0.9002
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5317 - acc: 0.8992
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5319 - acc: 0.8997
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5324 - acc: 0.9001
+ 2700/12800 [=====>........................] - ETA: 4s - loss: 0.5329 - acc: 0.8995
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5325 - acc: 0.8992
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5324 - acc: 0.9012
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5326 - acc: 0.9016
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5326 - acc: 0.9025
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5328 - acc: 0.9026
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5334 - acc: 0.9024
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5329 - acc: 0.9030
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5332 - acc: 0.9036
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5333 - acc: 0.9035
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5337 - acc: 0.9028
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5336 - acc: 0.9026
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5331 - acc: 0.9036
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5330 - acc: 0.9026
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5328 - acc: 0.9035
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5329 - acc: 0.9036
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5328 - acc: 0.9040
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5328 - acc: 0.9034
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5325 - acc: 0.9043
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5325 - acc: 0.9045
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5326 - acc: 0.9043
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5326 - acc: 0.9047
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5326 - acc: 0.9046
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5325 - acc: 0.9047
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5326 - acc: 0.9046
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5326 - acc: 0.9047
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5327 - acc: 0.9048
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5327 - acc: 0.9049
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5328 - acc: 0.9052
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5327 - acc: 0.9051
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5328 - acc: 0.9049
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5328 - acc: 0.9051
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5328 - acc: 0.9048
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5329 - acc: 0.9047
+12800/12800 [==============================] - 6s 435us/step - loss: 0.5328 - acc: 0.9048 - val_loss: 0.2049 - val_acc: 0.9591
+Epoch 20/20
+
+  300/12800 [..............................] - ETA: 4s - loss: 0.5233 - acc: 0.9237
+  600/12800 [>.............................] - ETA: 4s - loss: 0.5327 - acc: 0.9100
+  900/12800 [=>............................] - ETA: 4s - loss: 0.5332 - acc: 0.9041
+ 1200/12800 [=>............................] - ETA: 4s - loss: 0.5332 - acc: 0.9046
+ 1500/12800 [==>...........................] - ETA: 4s - loss: 0.5328 - acc: 0.9053
+ 1800/12800 [===>..........................] - ETA: 4s - loss: 0.5325 - acc: 0.9051
+ 2100/12800 [===>..........................] - ETA: 4s - loss: 0.5331 - acc: 0.9045
+ 2400/12800 [====>.........................] - ETA: 4s - loss: 0.5319 - acc: 0.9046
+ 2700/12800 [=====>........................] - ETA: 3s - loss: 0.5322 - acc: 0.9056
+ 3000/12800 [======>.......................] - ETA: 3s - loss: 0.5327 - acc: 0.9029
+ 3300/12800 [======>.......................] - ETA: 3s - loss: 0.5326 - acc: 0.9021
+ 3600/12800 [=======>......................] - ETA: 3s - loss: 0.5325 - acc: 0.9016
+ 3900/12800 [========>.....................] - ETA: 3s - loss: 0.5325 - acc: 0.9024
+ 4200/12800 [========>.....................] - ETA: 3s - loss: 0.5327 - acc: 0.9019
+ 4500/12800 [=========>....................] - ETA: 3s - loss: 0.5318 - acc: 0.9024
+ 4800/12800 [==========>...................] - ETA: 3s - loss: 0.5316 - acc: 0.9027
+ 5100/12800 [==========>...................] - ETA: 3s - loss: 0.5319 - acc: 0.9022
+ 5400/12800 [===========>..................] - ETA: 2s - loss: 0.5321 - acc: 0.9017
+ 5700/12800 [============>.................] - ETA: 2s - loss: 0.5322 - acc: 0.9017
+ 6000/12800 [=============>................] - ETA: 2s - loss: 0.5325 - acc: 0.9022
+ 6300/12800 [=============>................] - ETA: 2s - loss: 0.5324 - acc: 0.9027
+ 6600/12800 [==============>...............] - ETA: 2s - loss: 0.5323 - acc: 0.9039
+ 6900/12800 [===============>..............] - ETA: 2s - loss: 0.5323 - acc: 0.9039
+ 7200/12800 [===============>..............] - ETA: 2s - loss: 0.5321 - acc: 0.9041
+ 7500/12800 [================>.............] - ETA: 2s - loss: 0.5321 - acc: 0.9032
+ 7800/12800 [=================>............] - ETA: 1s - loss: 0.5321 - acc: 0.9037
+ 8100/12800 [=================>............] - ETA: 1s - loss: 0.5321 - acc: 0.9043
+ 8400/12800 [==================>...........] - ETA: 1s - loss: 0.5323 - acc: 0.9045
+ 8700/12800 [===================>..........] - ETA: 1s - loss: 0.5323 - acc: 0.9042
+ 9000/12800 [====================>.........] - ETA: 1s - loss: 0.5320 - acc: 0.9041
+ 9300/12800 [====================>.........] - ETA: 1s - loss: 0.5322 - acc: 0.9039
+ 9600/12800 [=====================>........] - ETA: 1s - loss: 0.5321 - acc: 0.9040
+ 9900/12800 [======================>.......] - ETA: 1s - loss: 0.5319 - acc: 0.9042
+10200/12800 [======================>.......] - ETA: 1s - loss: 0.5317 - acc: 0.9047
+10500/12800 [=======================>......] - ETA: 0s - loss: 0.5316 - acc: 0.9052
+10800/12800 [========================>.....] - ETA: 0s - loss: 0.5317 - acc: 0.9049
+11100/12800 [=========================>....] - ETA: 0s - loss: 0.5319 - acc: 0.9052
+11400/12800 [=========================>....] - ETA: 0s - loss: 0.5318 - acc: 0.9053
+11700/12800 [==========================>...] - ETA: 0s - loss: 0.5318 - acc: 0.9051
+12000/12800 [===========================>..] - ETA: 0s - loss: 0.5318 - acc: 0.9049
+12300/12800 [===========================>..] - ETA: 0s - loss: 0.5318 - acc: 0.9049
+12600/12800 [============================>.] - ETA: 0s - loss: 0.5316 - acc: 0.9051
+12800/12800 [==============================] - 6s 432us/step - loss: 0.5316 - acc: 0.9054 - val_loss: 0.2013 - val_acc: 0.9615
+C:\Anaconda3\lib\site-packages\h5py\__init__.py:36: FutureWarning: Conversion of the second argument of issubdtype from `float` to `np.floating` is deprecated. In future, it will be treated as `np.float64 == np.dtype(float).type`.
+  from ._conv import register_converters as _register_converters
+Using TensorFlow backend.
+Finished
